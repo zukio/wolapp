@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>PC管理パネル</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <h1>PC管理パネル</h1>
-    
-    <div class="pc-container" id="pc-container">
-        <!-- PCカードはJavaScriptで動的に生成 -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="header">
+      <h1>PC管理パネル</h1>
+      <button
+        id="close-app-btn"
+        class="close-btn"
+      >
+        アプリを終了
+      </button>
+    </div>
+
+    <div
+      class="pc-container"
+      id="pc-container"
+    >
+      <!-- PCカードはJavaScriptで動的に生成 -->
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-</body>
+  </body>
 </html>
