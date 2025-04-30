@@ -15,12 +15,20 @@
   <body>
     <div class="header">
       <h1>PC管理パネル</h1>
-      <button
-        id="close-app-btn"
-        class="close-btn"
-      >
-        アプリを終了
-      </button>
+      <div class="app-controls">
+        <button
+          id="restart-app-btn"
+          class="restart-btn"
+        >
+          再起動
+        </button>
+        <button
+          id="close-app-btn"
+          class="close-btn"
+        >
+          終了
+        </button>
+      </div>
     </div>
 
     <div
@@ -28,6 +36,21 @@
       id="pc-container"
     >
       <!-- PCカードはJavaScriptで動的に生成 -->
+    </div>
+
+    <div
+      id="command-modal"
+      class="modal"
+    >
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>システムコマンド</h2>
+        <p id="modal-message"></p>
+        <div
+          id="command-list"
+          class="command-list"
+        ></div>
+      </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>

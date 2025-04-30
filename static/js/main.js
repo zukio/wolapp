@@ -101,22 +101,100 @@ function closeApp() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data.message);
-        // 終了メッセージを表示
-        const container = document.getElementById("pc-container");
-        container.innerHTML = '<div class="exit-message">アプリケーションを終了しています...</div>';
+
+        if (data.commands) {
+          // コマンドがある場合はモーダルに表示
+          showCommandModal(data.message, data.commands);
+        } else {
+          // 終了メッセージを表示
+          const container = document.getElementById("pc-container");
+          container.innerHTML = '<div class="exit-message">アプリケーションを終了しています...</div>';
+        }
       })
       .catch((error) => console.error("終了エラー:", error));
   }
+}
+
+// アプリケーションを再起動
+function restartApp() {
+  if (confirm("アプリケーションを再起動しますか？")) {
+    fetch("/restart", {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.message);
+
+        if (data.commands) {
+          // コマンドがある場合はモーダルに表示
+          showCommandModal(data.message, data.commands);
+        } else {
+          // 再起動メッセージを表示
+          const container = document.getElementById("pc-container");
+          container.innerHTML = '<div class="exit-message">アプリケーションを再起動しています...</div>';
+        }
+      })
+      .catch((error) => console.error("再起動エラー:", error));
+  }
+}
+
+// コマンドモーダルを表示
+function showCommandModal(message, commands) {
+  const modal = document.getElementById("command-modal");
+  const messageElement = document.getElementById("modal-message");
+  const commandList = document.getElementById("command-list");
+
+  // メッセージを設定
+  messageElement.textContent = message;
+
+  // コマンドリストをクリア
+  commandList.innerHTML = "";
+
+  // コマンドを追加
+  commands.forEach((cmd) => {
+    const cmdElement = document.createElement("div");
+    cmdElement.className = "command-item";
+    cmdElement.textContent = cmd;
+    commandList.appendChild(cmdElement);
+  });
+
+  // モーダルを表示
+  modal.style.display = "block";
+}
+
+// モーダルを閉じる
+function closeModal() {
+  const modal = document.getElementById("command-modal");
+  modal.style.display = "none";
 }
 
 // 初期表示と定期更新
 updatePCs();
 setInterval(updatePCs, UPDATE_INTERVAL);
 
-// Closeボタンのイベントリスナーを設定
+// ボタンのイベントリスナーを設定
 document.addEventListener("DOMContentLoaded", function () {
   const closeBtn = document.getElementById("close-app-btn");
   if (closeBtn) {
     closeBtn.addEventListener("click", closeApp);
   }
+
+  const restartBtn = document.getElementById("restart-app-btn");
+  if (restartBtn) {
+    restartBtn.addEventListener("click", restartApp);
+  }
+
+  // モーダルの閉じるボタン
+  const closeModalBtn = document.querySelector(".close-modal");
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", closeModal);
+  }
+
+  // モーダル外クリックで閉じる
+  window.addEventListener("click", function (event) {
+    const modal = document.getElementById("command-modal");
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
 });

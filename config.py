@@ -16,11 +16,15 @@ PCS_CONFIG = {
         'name': 'PC 1',
         'mac': 'XX:XX:XX:XX:XX:XX',  # PC1のMACアドレスを設定
         'ip': '192.168.1.100',       # PC1のIPアドレスを設定
+        'username': 'user1',         # PC1のユーザー名
+        'password': 'password1',     # PC1のパスワード
     },
     'pc2': {
         'name': 'PC 2',
         'mac': 'YY:YY:YY:YY:YY:YY',  # PC2のMACアドレスを設定
         'ip': '192.168.1.101',       # PC2のIPアドレスを設定
+        'username': 'user2',         # PC2のユーザー名
+        'password': 'password2',     # PC2のパスワード
     }
 }
 
@@ -33,6 +37,7 @@ APP_CONFIG = {
 
 # SSHシャットダウン設定
 SSH_CONFIG = {
-    'username': 'user',            # SSHユーザー名
+    'username': 'user',            # デフォルトSSHユーザー名
+    'password': None,              # デフォルトパスワード（Noneの場合は鍵認証を試みる）
     'timeout': 5                   # SSHコマンドタイムアウト（秒）
 }
