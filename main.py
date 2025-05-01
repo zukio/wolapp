@@ -12,7 +12,7 @@ import config
 app = Flask(__name__, template_folder='src')
 
 # OSタイプを確認
-IS_WINDOWS = True
+IS_WINDOWS = platform.system() == 'Windows'
 
 # コンフィグからPC情報を読み込み
 PCs = {pc_id: {**pc_info, 'status': 'unknown'}

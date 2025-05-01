@@ -48,7 +48,13 @@ def wake_on_lan(mac_address):
 def shutdown_pc(ip, username='user', password=None, timeout=5, os_type='windows'):
     """PCをシャットダウン（Windows/Linuxに対応）"""
     try:
-        if os_type.lower() == 'windows':
+        # 現在の実行環境を確認
+        is_windows_env = platform.system() == 'Windows'
+        # ターゲットがWindowsかLinuxか
+        is_windows_target = os_type.lower() == 'windows'
+
+        # Windows環境からWindowsターゲットへのシャットダウン
+        if is_windows_env and is_windows_target:
             # Windowsの場合はnet use / shutdownコマンドを使用
             if password:
                 # まずネットワーク共有に接続（認証が必要な場合）
@@ -71,7 +77,27 @@ def shutdown_pc(ip, username='user', password=None, timeout=5, os_type='windows'
                                     stderr=subprocess.PIPE,
                                     text=True,
                                     timeout=timeout)
-        else:
+
+        # Linux環境からWindowsターゲットへのシャットダウン
+        elif not is_windows_env and is_windows_target:
+            # ラズパイなどのLinuxからWindowsをシャットダウン (net rpc shutdown使用)
+            shutdown_cmd = [
+                'net', 'rpc', 'shutdown',
+                '-I', ip,
+                '-U', f'{username}%{password}'
+            ]
+            result = subprocess.run(
+                shutdown_cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout
+            )
+            print(result.stdout)
+            print(result.stderr)
+
+        # Windows/Linux環境からLinuxターゲットへのシャットダウン
+        elif not is_windows_target:
             # Linux/Mac環境ではSSHを使用
             ssh_cmd = ['ssh']
 
