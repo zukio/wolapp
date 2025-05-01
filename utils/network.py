@@ -45,12 +45,10 @@ def wake_on_lan(mac_address):
     return True
 
 
-def shutdown_pc(ip, username='user', password=None, timeout=5):
+def shutdown_pc(ip, username='user', password=None, timeout=5, os_type='windows'):
     """PCをシャットダウン（Windows/Linuxに対応）"""
     try:
-        is_windows = platform.system() == 'Windows'
-
-        if is_windows:
+        if os_type.lower() == 'windows':
             # Windowsの場合はnet use / shutdownコマンドを使用
             if password:
                 # まずネットワーク共有に接続（認証が必要な場合）
