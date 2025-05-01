@@ -1,4 +1,17 @@
 .venv
+.vscode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+*.log
+*.env
+*.zip
+*.tar.gz
+*.tar
+
 
 start.bat
 
