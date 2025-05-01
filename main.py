@@ -106,14 +106,38 @@ def shutdown(pc_id):
 
         if success:
             print(f"シャットダウン成功: {PCs[pc_id]['name']}")
+
+            # 最初にshutdown_wait_timeで指定された時間だけ待機
+            time.sleep(config.APP_CONFIG['shutdown_wait_time'])
+
+            # シャットダウン中は定期的にPCの状態を確認し、完全にオフラインになるまで待機
+            max_retry = 10  # 最大試行回数
+            retry_count = 0
+            retry_interval = 3  # 確認間隔（秒）
+
+            while retry_count < max_retry:
+                is_online = ping(PCs[pc_id]['ip'])
+                if not is_online:
+                    # PCがオフラインになったら終了
+                    PCs[pc_id]['status'] = 'offline'
+                    break
+
+                print(f"シャットダウン待機中... {retry_count + 1}/{max_retry}")
+                retry_count += 1
+                time.sleep(retry_interval)
+
+            # 最大試行回数に達しても応答がある場合
+            if retry_count >= max_retry:
+                print(
+                    f"警告: {PCs[pc_id]['name']} はシャットダウンに時間がかかっているか、失敗した可能性があります")
+                is_online = ping(PCs[pc_id]['ip'])
+                PCs[pc_id]['status'] = 'online' if is_online else 'offline'
         else:
             print(f"シャットダウン失敗: {PCs[pc_id]['name']}")
-
-        time.sleep(config.APP_CONFIG['shutdown_wait_time'])
-
-        # 状態を更新
-        is_online = ping(PCs[pc_id]['ip'])
-        PCs[pc_id]['status'] = 'online' if is_online else 'offline'
+            # シャットダウン失敗の場合も短い待機時間の後に状態を更新
+            time.sleep(5)
+            is_online = ping(PCs[pc_id]['ip'])
+            PCs[pc_id]['status'] = 'online' if is_online else 'offline'
 
         # ロックを解除
         operation_locks[pc_id] = False
