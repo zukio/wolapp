@@ -18,6 +18,7 @@ IS_WINDOWS = platform.system() == 'Windows'
 PCs = {pc_id: {**pc_info, 'status': 'unknown'}
        for pc_id, pc_info in config.PCS_CONFIG.items()}
 
+
 # PC操作のロック状態
 operation_locks = {pc_id: False for pc_id in PCs.keys()}
 
@@ -26,6 +27,7 @@ def update_pc_status():
     """全PCの状態を定期的に更新する"""
     while True:
         for pc_id, pc in PCs.items():
+            print(f"{pc_id}: {pc['ip']} ({pc['name']})")
             try:
                 is_online = ping(pc['ip'])
                 PCs[pc_id]['status'] = 'online' if is_online else 'offline'
@@ -181,11 +183,9 @@ def restart_app():
     if IS_WINDOWS:
         # Windows環境では終了後にバッチファイルで再起動
         def restart_server():
-            time.sleep(1)  # レスポンスを返すための小さな遅延
+            time.sleep(1)
             try:
-                # start.bat を実行して再起動
                 subprocess.Popen(['start.bat'], shell=True)
-                # 現在のプロセスを終了
                 sys.exit(0)
             except Exception as e:
                 print(f"再起動エラー: {e}")
@@ -193,15 +193,21 @@ def restart_app():
 
         threading.Thread(target=restart_server).start()
         return jsonify({'success': True, 'message': 'アプリケーションを再起動しています...'})
+
     else:
-        # Linux環境ではコマンドを表示
+        # Linux環境：systemdで再起動
+        def restart_task():
+            time.sleep(1)  # HTTPレスポンス返却待ち
+            subprocess.run(
+                ["sudo", "/usr/bin/systemctl", "restart", "wolapp.service"],
+                check=True
+            )
+
+        threading.Thread(target=restart_task).start()
+
         return jsonify({
             'success': True,
-            'message': 'Linux環境ではシステムコマンドでサービスを再起動してください',
-            'commands': [
-                'sudo systemctl daemon-reload',
-                'sudo systemctl restart wolapp.service'
-            ]
+            'message': 'サービスを再起動しています...'
         })
 
 

@@ -1,5 +1,5 @@
 // PC状態の更新間隔（ミリ秒）
-const UPDATE_INTERVAL = 5000;
+const UPDATE_INTERVAL = 1000;
 
 // PC一覧を更新
 function updatePCs() {
